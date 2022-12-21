@@ -1,36 +1,75 @@
-import 'package:dicoding_flutter_fundamental/model/restaurant.dart';
+import 'package:dicoding_flutter_fundamental/common/error_message_widget.dart';
+import 'package:dicoding_flutter_fundamental/common/loading_widget.dart';
 import 'package:dicoding_flutter_fundamental/model/menu_detail.dart';
+import 'package:dicoding_flutter_fundamental/model/restaurant.dart';
+import 'package:dicoding_flutter_fundamental/model/restaurant_detail.dart';
+import 'package:dicoding_flutter_fundamental/pages/detail/restaurant_detail_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class RestaurantDetailPage extends StatelessWidget {
-  static const routeName = "restaurant/detail";
+class RestaurantDetailPage extends StatefulWidget {
+  const RestaurantDetailPage({Key? key, required this.restaurant}) : super(key: key);
 
+  static const String routeName = "detail";
   final Restaurant restaurant;
 
-  const RestaurantDetailPage({Key? key, required this.restaurant}) : super(key: key);
+  @override
+  State<RestaurantDetailPage> createState() => _RestaurantDetailPageState();
+}
+class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
+
+  bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<RestaurantDetailProvider>(context, listen: false).loadRestaurantDetail(widget.restaurant.id);
+    });
+  }
+
+  void _addOrRemoveFavorite() {
+    if (isFavorite) {
+      Provider.of<RestaurantDetailProvider>(context, listen: false).deleteFromFavorite(widget.restaurant);
+    } else {
+      Provider.of<RestaurantDetailProvider>(context, listen: false).addToFavorite(widget.restaurant);
+    }
+
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Informasi Restoran"),
+        actions: [
+          _favoriteButton()
+        ],
       ),
       body: SafeArea(
-        child: Container(
-          color: Colors.white,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildThumbnail(context),
-                  _buildRestaurantAddress(context),
-                  _buildDescription(context),
-                  _buildMenu(context, "Makanan", restaurant.menu.foods),
-                  _buildMenu(context, "Minuman", restaurant.menu.drinks)
-                ],
-              ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Consumer<RestaurantDetailProvider>(
+              builder: (context, provider, _) {
+                if (provider.state == ResultState.success) {
+                  return _buildRestaurantDetail(provider);
+                } else if (provider.state == ResultState.loading) {
+                  return const Padding(
+                    padding: EdgeInsets.all(32.0),
+                    child: LoadingWidget(),
+                  );
+                } else {
+                  return const Padding(
+                    padding: EdgeInsets.all(32.0),
+                    child: ErrorMessageWidget(message: "Gagal menampilkan detail restoran, silahkan coba lagi"),
+                  );
+                }
+              }
             ),
           ),
         ),
@@ -38,13 +77,39 @@ class RestaurantDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildThumbnail(BuildContext context) {
+  Widget _favoriteButton() {
+    return Consumer<RestaurantDetailProvider>(
+      builder: (context, provider, _) {
+        isFavorite = provider.isFavorite;
+
+        return IconButton(
+          icon: provider.isFavorite ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
+          onPressed: _addOrRemoveFavorite,
+        );
+      }
+    );
+  }
+
+  Widget _buildRestaurantDetail(RestaurantDetailProvider state) {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildThumbnail(state.restaurantDetail),
+          _buildRestaurantAddress(state.restaurantDetail),
+          _buildDescription(state.restaurantDetail),
+          _buildMenu("Makanan", state.restaurantDetail.menu.foods),
+          _buildMenu("Minuman", state.restaurantDetail.menu.drinks)
+      ]
+    );
+  }
+
+  Widget _buildThumbnail(RestaurantDetail restaurantDetail) {
     return Container(
       height: 200.0,
       decoration: BoxDecoration(
         image: DecorationImage(
             fit: BoxFit.cover,
-            image: NetworkImage(restaurant.pictureId)
+            image: NetworkImage("https://restaurant-api.dicoding.dev/images/medium/${restaurantDetail.pictureId}")
         ),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(12),
@@ -54,14 +119,14 @@ class RestaurantDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildRestaurantAddress(BuildContext context) {
+  Widget _buildRestaurantAddress(RestaurantDetail restaurantDetail) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            restaurant.name,
+            restaurantDetail.name,
             style: const TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
@@ -77,7 +142,7 @@ class RestaurantDetailPage extends StatelessWidget {
                 size: 16,
               ),
               const SizedBox(width: 8),
-              Text(restaurant.city),
+              Text(restaurantDetail.city),
             ],
           ),
         ],
@@ -85,7 +150,7 @@ class RestaurantDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDescription(BuildContext context) {
+  Widget _buildDescription(RestaurantDetail restaurantDetail) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -97,13 +162,13 @@ class RestaurantDetailPage extends StatelessWidget {
             fontSize: 16
           )),
           const SizedBox(height: 8),
-          Text(restaurant.description),
+          Text(restaurantDetail.description),
         ],
       ),
     );
   }
 
-  Widget _buildMenu(BuildContext context, String title, List<MenuDetail> items) {
+  Widget _buildMenu(String title, List<MenuDetail> items) {
     return Padding(
       padding: const EdgeInsets.only(
         left: 16.0,
@@ -115,7 +180,7 @@ class RestaurantDetailPage extends StatelessWidget {
         children: [
           Text(
               title,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           Column(
             children: [

@@ -2,43 +2,47 @@ import 'package:dicoding_flutter_fundamental/common/error_message_widget.dart';
 import 'package:dicoding_flutter_fundamental/common/loading_widget.dart';
 import 'package:dicoding_flutter_fundamental/model/restaurant.dart';
 import 'package:dicoding_flutter_fundamental/pages/detail/restaurant_detail_page.dart';
-import 'package:dicoding_flutter_fundamental/pages/home/home_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:dicoding_flutter_fundamental/pages/favorite/favorite_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
-  static const String routeName = "home";
-
-  const HomePage({Key? key}) : super(key: key);
+class FavoritePage extends StatefulWidget {
+  const FavoritePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<FavoritePage> createState() => _FavoritePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _FavoritePageState extends State<FavoritePage> {
   TextEditingController searchTextController = TextEditingController();
 
-  late HomeProvider homeProvider;
-  
   @override
   void initState() {
     super.initState();
+
+    reloadData();
+  }
+
+  void reloadData() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<FavoriteProvider>(context, listen: false).loadData();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Daftar Restoran"),
-        ),
-        body: Column(
-          children: [
-            _buildSearchBox(context),
-            Expanded(
-                child: _buildRestaurantList(context)
-            ),
-          ],
-        ),
+      appBar: AppBar(
+        title: const Text("Daftar Restoran"),
+      ),
+      body: Column(
+        children: [
+          _buildSearchBox(context),
+          Expanded(
+              child: _buildRestaurantList(context)
+          ),
+        ],
+      ),
     );
   }
 
@@ -48,18 +52,18 @@ class _HomePageState extends State<HomePage> {
       child: TextField(
         controller: searchTextController,
         decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          hintText: "Cari Restoran Favoritemu"
+            border: OutlineInputBorder(),
+            hintText: "Cari Restoran Favoritemu"
         ),
         onChanged: (text) {
-          Provider.of<HomeProvider>(context, listen: false).findData(text);
+          Provider.of<FavoriteProvider>(context, listen: false).findData(text);
         },
       ),
     );
   }
 
   Widget _buildRestaurantList(BuildContext context) {
-    return Consumer<HomeProvider>(
+    return Consumer<FavoriteProvider>(
       builder: (context, state, _) {
         if (state.state == ResultState.success) {
           return ListView.builder(
@@ -95,7 +99,7 @@ class _HomePageState extends State<HomePage> {
       title: Text(restaurant.name),
       subtitle: Padding(
         padding: const EdgeInsets.only(
-          top: 8
+            top: 8
         ),
         child: Column(
           children: [
@@ -129,6 +133,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void navigateToRestaurantDetail(BuildContext context, Restaurant restaurant) {
-    Navigator.pushNamed(context, RestaurantDetailPage.routeName, arguments: restaurant);
+    Navigator.pushNamed(context, RestaurantDetailPage.routeName, arguments: restaurant).then((value) {
+      reloadData();
+    });
   }
 }

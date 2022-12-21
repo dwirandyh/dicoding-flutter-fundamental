@@ -1,33 +1,38 @@
 import 'dart:convert';
 
-class Restaurant {
+import 'package:dicoding_flutter_fundamental/model/menu.dart';
+
+class RestaurantDetail {
   String id;
   String name;
   String description;
   String pictureId;
   String city;
   double rating;
+  Menu menu;
 
-  Restaurant({
+  RestaurantDetail({
     required this.id,
     required this.name,
     required this.description,
     required this.pictureId,
     required this.city,
     required this.rating,
+    required this.menu,
   });
 
-  factory Restaurant.fromRawJson(String str) => Restaurant.fromJson(json.decode(str));
+  factory RestaurantDetail.fromRawJson(String str) => RestaurantDetail.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory Restaurant.fromJson(Map<String, dynamic> json) => Restaurant(
+  factory RestaurantDetail.fromJson(Map<String, dynamic> json) => RestaurantDetail(
       id: json["id"],
       name: json["name"],
       description: json["description"],
       pictureId: json["pictureId"],
       city: json["city"],
       rating: double.tryParse(json["rating"].toString()) ?? 0,
+      menu: Menu.fromJson(json["menus"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -36,7 +41,8 @@ class Restaurant {
     "description": description,
     "pictureId": pictureId,
     "city": city,
-    "rating": 0,
+    "rating": rating,
+    "menus": menu.toJson()
   };
 }
 

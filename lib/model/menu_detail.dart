@@ -7,7 +7,7 @@ class MenuDetail {
     required this.name
   });
 
-  factory MenuDetail.fromRawJson(String str) => MenuDetail.fromRawJson(str);
+  factory MenuDetail.fromRawJson(String str) => MenuDetail.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 

@@ -1,15 +1,57 @@
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:dicoding_flutter_fundamental/model/restaurant.dart';
+import 'package:dicoding_flutter_fundamental/notification/notification_service.dart';
 import 'package:dicoding_flutter_fundamental/pages/detail/restaurant_detail_page.dart';
+import 'package:dicoding_flutter_fundamental/pages/detail/restaurant_detail_provider.dart';
+import 'package:dicoding_flutter_fundamental/pages/favorite/favorite_provider.dart';
+import 'package:dicoding_flutter_fundamental/pages/home/home_provider.dart';
+import 'package:dicoding_flutter_fundamental/pages/home/home_tab_bar.dart';
+import 'package:dicoding_flutter_fundamental/pages/setting/setting_provider.dart';
+import 'package:dicoding_flutter_fundamental/service/background_service.dart';
+import 'package:dicoding_flutter_fundamental/service/local_storage_service.dart';
+import 'package:dicoding_flutter_fundamental/service/restaurant_service.dart';
 import 'package:flutter/material.dart';
 import 'pages/home/home_page.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Background Service
+  final BackgroundService service = BackgroundService();
+  service.initializeIsolate();
+  AndroidAlarmManager.initialize();
+
+  // Notification
+  final NotificationService notificationService = NotificationService();
+  await notificationService.initNotifications(flutterLocalNotificationsPlugin);
+  notificationService.requestIOSPermissions(flutterLocalNotificationsPlugin);
+
+
+  runApp(
+      MultiProvider(
+          providers: [
+            ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider(restaurantService: RestaurantService())),
+            ChangeNotifierProvider<RestaurantDetailProvider>(create: (_) => RestaurantDetailProvider(
+                restaurantService: RestaurantService(),
+                localStorageService: LocalStorageService()
+            )),
+            ChangeNotifierProvider<FavoriteProvider>(create: (_) => FavoriteProvider(localStorageService: LocalStorageService())),
+            ChangeNotifierProvider<SettingProvider>(create: (_) => SettingProvider())
+          ],
+        child: const MyApp(),
+      )
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -27,7 +69,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      initialRoute: HomePage.routeName,
+      home: const HomeTabBar(),
       routes: {
         HomePage.routeName: (context) => const HomePage(),
         RestaurantDetailPage.routeName: (context) => RestaurantDetailPage(
