@@ -31,10 +31,10 @@ class RestaurantService {
     String url = "$_baseUrl/detail/$id";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
-      return RestaurantDetail.fromJson(json.decode(response.body)["restaurant"]);
+      return RestaurantDetail.fromJson(
+          json.decode(response.body)["restaurant"]);
     } else {
       throw Exception("Gagal mengambil data restaurant");
     }
   }
-
 }

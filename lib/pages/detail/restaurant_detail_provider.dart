@@ -7,11 +7,11 @@ import 'package:flutter/foundation.dart';
 enum ResultState { loading, success, error }
 
 class RestaurantDetailProvider extends ChangeNotifier {
-
   final RestaurantService restaurantService;
   final LocalStorageService localStorageService;
 
-  RestaurantDetailProvider({required this.restaurantService, required this.localStorageService});
+  RestaurantDetailProvider(
+      {required this.restaurantService, required this.localStorageService});
 
   late ResultState state = ResultState.loading;
   late RestaurantDetail restaurantDetail;
@@ -25,7 +25,7 @@ class RestaurantDetailProvider extends ChangeNotifier {
       restaurantDetail = await restaurantService.fetchRestaurantDetail(id);
       isFavorite = await checkFavoriteStatus(id);
       state = ResultState.success;
-    } catch(e) {
+    } catch (e) {
       state = ResultState.error;
     } finally {
       notifyListeners();
@@ -33,7 +33,8 @@ class RestaurantDetailProvider extends ChangeNotifier {
   }
 
   Future<bool> checkFavoriteStatus(String id) async {
-    List<Map<String, dynamic>> result = await localStorageService.findByPrimaryKey(TableSchema.favorite, "id", id);
+    List<Map<String, dynamic>> result = await localStorageService
+        .findByPrimaryKey(TableSchema.favorite, "id", id);
     if (result.isNotEmpty) {
       return true;
     } else {
@@ -51,11 +52,10 @@ class RestaurantDetailProvider extends ChangeNotifier {
   }
 
   void deleteFromFavorite(Restaurant restaurant) async {
-    localStorageService.deleteWithPrimaryKey(TableSchema.favorite, "id", restaurant.id);
+    localStorageService.deleteWithPrimaryKey(
+        TableSchema.favorite, "id", restaurant.id);
 
     isFavorite = false;
     notifyListeners();
   }
-
-
 }

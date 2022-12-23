@@ -27,21 +27,21 @@ Future<void> main() async {
   await notificationService.initNotifications(flutterLocalNotificationsPlugin);
   notificationService.requestIOSPermissions(flutterLocalNotificationsPlugin);
 
-
-  runApp(
-      MultiProvider(
-          providers: [
-            ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider(restaurantService: RestaurantService())),
-            ChangeNotifierProvider<RestaurantDetailProvider>(create: (_) => RestaurantDetailProvider(
-                restaurantService: RestaurantService(),
-                localStorageService: LocalStorageService()
-            )),
-            ChangeNotifierProvider<FavoriteProvider>(create: (_) => FavoriteProvider(localStorageService: LocalStorageService())),
-            ChangeNotifierProvider<SettingProvider>(create: (_) => SettingProvider())
-          ],
-        child: const MyApp(),
-      )
-  );
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider<HomeProvider>(
+          create: (_) => HomeProvider(restaurantService: RestaurantService())),
+      ChangeNotifierProvider<RestaurantDetailProvider>(
+          create: (_) => RestaurantDetailProvider(
+              restaurantService: RestaurantService(),
+              localStorageService: LocalStorageService())),
+      ChangeNotifierProvider<FavoriteProvider>(
+          create: (_) =>
+              FavoriteProvider(localStorageService: LocalStorageService())),
+      ChangeNotifierProvider<SettingProvider>(create: (_) => SettingProvider())
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -73,8 +73,9 @@ class _MyAppState extends State<MyApp> {
       routes: {
         HomePage.routeName: (context) => const HomePage(),
         RestaurantDetailPage.routeName: (context) => RestaurantDetailPage(
-            restaurant: ModalRoute.of(context)?.settings.arguments as Restaurant,
-        ),
+              restaurant:
+                  ModalRoute.of(context)?.settings.arguments as Restaurant,
+            ),
       },
     );
   }

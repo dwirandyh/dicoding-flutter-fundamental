@@ -38,9 +38,7 @@ class _FavoritePageState extends State<FavoritePage> {
       body: Column(
         children: [
           _buildSearchBox(context),
-          Expanded(
-              child: _buildRestaurantList(context)
-          ),
+          Expanded(child: _buildRestaurantList(context)),
         ],
       ),
     );
@@ -52,9 +50,7 @@ class _FavoritePageState extends State<FavoritePage> {
       child: TextField(
         controller: searchTextController,
         decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: "Cari Restoran Favoritemu"
-        ),
+            border: OutlineInputBorder(), hintText: "Cari Restoran Favoritemu"),
         onChanged: (text) {
           Provider.of<FavoriteProvider>(context, listen: false).findData(text);
         },
@@ -70,19 +66,22 @@ class _FavoritePageState extends State<FavoritePage> {
               itemCount: state.restaurants.length,
               itemBuilder: (context, index) {
                 return _buildRestaurantItem(context, state.restaurants[index]);
-              }
-          );
+              });
         } else if (state.state == ResultState.loading) {
           return const LoadingWidget();
         } else if (state.state == ResultState.empty) {
           return const Padding(
             padding: EdgeInsets.all(32.0),
-            child: ErrorMessageWidget(message: "Restoran tidak ditemukan, silahkan cari dengan kata kunci yang lain"),
+            child: ErrorMessageWidget(
+                message:
+                    "Restoran tidak ditemukan, silahkan cari dengan kata kunci yang lain"),
           );
         } else {
           return const Padding(
             padding: EdgeInsets.all(32.0),
-            child: ErrorMessageWidget(message: "Gagal menampilkan detail restoran, silahkan coba lagi"),
+            child: ErrorMessageWidget(
+                message:
+                    "Gagal menampilkan detail restoran, silahkan coba lagi"),
           );
         }
       },
@@ -91,16 +90,15 @@ class _FavoritePageState extends State<FavoritePage> {
 
   Widget _buildRestaurantItem(BuildContext context, Restaurant restaurant) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
       leading: Image.network(
         "https://restaurant-api.dicoding.dev/images/medium/${restaurant.pictureId}",
         width: 100,
       ),
       title: Text(restaurant.name),
       subtitle: Padding(
-        padding: const EdgeInsets.only(
-            top: 8
-        ),
+        padding: const EdgeInsets.only(top: 8),
         child: Column(
           children: [
             Row(
@@ -133,7 +131,9 @@ class _FavoritePageState extends State<FavoritePage> {
   }
 
   void navigateToRestaurantDetail(BuildContext context, Restaurant restaurant) {
-    Navigator.pushNamed(context, RestaurantDetailPage.routeName, arguments: restaurant).then((value) {
+    Navigator.pushNamed(context, RestaurantDetailPage.routeName,
+            arguments: restaurant)
+        .then((value) {
       reloadData();
     });
   }

@@ -10,7 +10,6 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-
   void notificationChanged(bool value) {
     Provider.of<SettingProvider>(context, listen: false).changeSetting(value);
   }
@@ -48,14 +47,13 @@ class _SettingPageState extends State<SettingPage> {
               ],
             ),
           ),
-          Consumer<SettingProvider>(
-            builder: (context, provider, _) {
-              return Switch(value: provider.isNotificationActivated, onChanged: notificationChanged);
-            }),
+          Consumer<SettingProvider>(builder: (context, provider, _) {
+            return Switch(
+                value: provider.isNotificationActivated,
+                onChanged: notificationChanged);
+          }),
         ],
       ),
     );
   }
-
-
 }

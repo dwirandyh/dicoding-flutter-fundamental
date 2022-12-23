@@ -5,15 +5,12 @@ import 'package:flutter/foundation.dart';
 enum ResultState { loading, success, empty, error }
 
 class HomeProvider extends ChangeNotifier {
-
   final RestaurantService restaurantService;
 
   late ResultState state = ResultState.loading;
   late List<Restaurant> restaurants = [];
 
-  HomeProvider({
-    required this.restaurantService
-  }) {
+  HomeProvider({required this.restaurantService}) {
     loadData();
   }
 
@@ -28,7 +25,7 @@ class HomeProvider extends ChangeNotifier {
       } else {
         state = ResultState.success;
       }
-    } catch(e) {
+    } catch (e) {
       state = ResultState.error;
     } finally {
       notifyListeners();
@@ -51,7 +48,7 @@ class HomeProvider extends ChangeNotifier {
       } else {
         state = ResultState.success;
       }
-    } catch(e) {
+    } catch (e) {
       state = ResultState.error;
     } finally {
       notifyListeners();

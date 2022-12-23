@@ -35,10 +35,11 @@ class _HomeTabBarState extends State<HomeTabBar> {
   void initState() {
     super.initState();
 
-    _notificationService.configureSelectNotificationSubject(context, RestaurantDetailPage.routeName);
-    _notificationService.configureDidReceiveLocalNotificationSubject(context, RestaurantDetailPage.routeName);
+    _notificationService.configureSelectNotificationSubject(
+        context, RestaurantDetailPage.routeName);
+    _notificationService.configureDidReceiveLocalNotificationSubject(
+        context, RestaurantDetailPage.routeName);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -46,18 +47,9 @@ class _HomeTabBarState extends State<HomeTabBar> {
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: "Beranda"
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
-              label: "Favorit"
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: "Setting"
-          )
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Beranda"),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Favorit"),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Setting")
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,

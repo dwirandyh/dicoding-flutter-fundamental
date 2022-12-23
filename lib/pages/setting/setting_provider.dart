@@ -5,7 +5,6 @@ import 'package:dicoding_flutter_fundamental/utils/date_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class SettingProvider extends ChangeNotifier {
   static const String notificationKey = "notification_new_restaurant";
   static const int alarmId = 1;
@@ -63,5 +62,4 @@ class SettingProvider extends ChangeNotifier {
   void deactivateNotification() async {
     AndroidAlarmManager.cancel(alarmId);
   }
-
 }

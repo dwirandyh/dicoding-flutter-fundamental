@@ -26,6 +26,5 @@ class BackgroundService {
     _uiSendPort?.send(null);
   }
 
-  Future<void> someTask() async {
-  }
+  Future<void> someTask() async {}
 }

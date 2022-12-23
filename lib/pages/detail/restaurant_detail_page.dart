@@ -9,7 +9,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
-  const RestaurantDetailPage({Key? key, required this.restaurant}) : super(key: key);
+  const RestaurantDetailPage({Key? key, required this.restaurant})
+      : super(key: key);
 
   static const String routeName = "detail";
   final Restaurant restaurant;
@@ -17,8 +18,8 @@ class RestaurantDetailPage extends StatefulWidget {
   @override
   State<RestaurantDetailPage> createState() => _RestaurantDetailPageState();
 }
-class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
 
+class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   bool isFavorite = false;
 
   @override
@@ -26,15 +27,18 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<RestaurantDetailProvider>(context, listen: false).loadRestaurantDetail(widget.restaurant.id);
+      Provider.of<RestaurantDetailProvider>(context, listen: false)
+          .loadRestaurantDetail(widget.restaurant.id);
     });
   }
 
   void _addOrRemoveFavorite() {
     if (isFavorite) {
-      Provider.of<RestaurantDetailProvider>(context, listen: false).deleteFromFavorite(widget.restaurant);
+      Provider.of<RestaurantDetailProvider>(context, listen: false)
+          .deleteFromFavorite(widget.restaurant);
     } else {
-      Provider.of<RestaurantDetailProvider>(context, listen: false).addToFavorite(widget.restaurant);
+      Provider.of<RestaurantDetailProvider>(context, listen: false)
+          .addToFavorite(widget.restaurant);
     }
 
     setState(() {
@@ -47,31 +51,30 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Informasi Restoran"),
-        actions: [
-          _favoriteButton()
-        ],
+        actions: [_favoriteButton()],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: Consumer<RestaurantDetailProvider>(
-              builder: (context, provider, _) {
-                if (provider.state == ResultState.success) {
-                  return _buildRestaurantDetail(provider);
-                } else if (provider.state == ResultState.loading) {
-                  return const Padding(
-                    padding: EdgeInsets.all(32.0),
-                    child: LoadingWidget(),
-                  );
-                } else {
-                  return const Padding(
-                    padding: EdgeInsets.all(32.0),
-                    child: ErrorMessageWidget(message: "Gagal menampilkan detail restoran, silahkan coba lagi"),
-                  );
-                }
+                builder: (context, provider, _) {
+              if (provider.state == ResultState.success) {
+                return _buildRestaurantDetail(provider);
+              } else if (provider.state == ResultState.loading) {
+                return const Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: LoadingWidget(),
+                );
+              } else {
+                return const Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: ErrorMessageWidget(
+                      message:
+                          "Gagal menampilkan detail restoran, silahkan coba lagi"),
+                );
               }
-            ),
+            }),
           ),
         ),
       ),
@@ -79,29 +82,26 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   }
 
   Widget _favoriteButton() {
-    return Consumer<RestaurantDetailProvider>(
-      builder: (context, provider, _) {
-        isFavorite = provider.isFavorite;
+    return Consumer<RestaurantDetailProvider>(builder: (context, provider, _) {
+      isFavorite = provider.isFavorite;
 
-        return IconButton(
-          icon: provider.isFavorite ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
-          onPressed: _addOrRemoveFavorite,
-        );
-      }
-    );
+      return IconButton(
+        icon: provider.isFavorite
+            ? const Icon(Icons.favorite)
+            : const Icon(Icons.favorite_border),
+        onPressed: _addOrRemoveFavorite,
+      );
+    });
   }
 
   Widget _buildRestaurantDetail(RestaurantDetailProvider state) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildThumbnail(state.restaurantDetail),
-          _buildRestaurantAddress(state.restaurantDetail),
-          _buildDescription(state.restaurantDetail),
-          _buildMenu("Makanan", state.restaurantDetail.menu.foods),
-          _buildMenu("Minuman", state.restaurantDetail.menu.drinks)
-      ]
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      _buildThumbnail(state.restaurantDetail),
+      _buildRestaurantAddress(state.restaurantDetail),
+      _buildDescription(state.restaurantDetail),
+      _buildMenu("Makanan", state.restaurantDetail.menu.foods),
+      _buildMenu("Minuman", state.restaurantDetail.menu.drinks)
+    ]);
   }
 
   Widget _buildThumbnail(RestaurantDetail restaurantDetail) {
@@ -110,12 +110,10 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       decoration: BoxDecoration(
         image: DecorationImage(
             fit: BoxFit.cover,
-            image: NetworkImage("https://restaurant-api.dicoding.dev/images/medium/${restaurantDetail.pictureId}")
-        ),
+            image: NetworkImage(
+                "https://restaurant-api.dicoding.dev/images/medium/${restaurantDetail.pictureId}")),
         borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12)
-        ),
+            bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12)),
       ),
     );
   }
@@ -129,10 +127,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
           Text(
             restaurantDetail.name,
             style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 24
-            ),
+                color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24),
           ),
           const SizedBox(height: 8),
           Row(
@@ -151,10 +146,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               ),
               RatingBarIndicator(
                 rating: restaurantDetail.rating,
-                itemBuilder: (context, index) => const Icon(
-                    Icons.star,
-                    color: Colors.amber
-                ),
+                itemBuilder: (context, index) =>
+                    const Icon(Icons.star, color: Colors.amber),
                 itemCount: 5,
                 itemSize: 16,
                 direction: Axis.horizontal,
@@ -172,11 +165,11 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Informasi Restoran", style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 16
-          )),
+          const Text("Informasi Restoran",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16)),
           const SizedBox(height: 8),
           Text(restaurantDetail.description),
         ],
@@ -195,20 +188,19 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           Column(
             children: [
               SizedBox(
                 height: 50,
                 child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
+                    scrollDirection: Axis.horizontal,
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       return _buildMenuItem(items[index]);
-                    }
-                ),
+                    }),
               )
             ],
           )
@@ -223,8 +215,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       child: Container(
         decoration: const BoxDecoration(
             color: Colors.grey,
-            borderRadius: BorderRadius.all(Radius.circular(8))
-        ),
+            borderRadius: BorderRadius.all(Radius.circular(8))),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Center(

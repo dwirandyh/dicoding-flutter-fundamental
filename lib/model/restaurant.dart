@@ -17,47 +17,26 @@ class Restaurant {
     required this.rating,
   });
 
-  factory Restaurant.fromRawJson(String str) => Restaurant.fromJson(json.decode(str));
+  factory Restaurant.fromRawJson(String str) =>
+      Restaurant.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
   factory Restaurant.fromJson(Map<String, dynamic> json) => Restaurant(
-      id: json["id"],
-      name: json["name"],
-      description: json["description"],
-      pictureId: json["pictureId"],
-      city: json["city"],
-      rating: double.tryParse(json["rating"].toString()) ?? 0,
-  );
+        id: json["id"],
+        name: json["name"],
+        description: json["description"],
+        pictureId: json["pictureId"],
+        city: json["city"],
+        rating: double.tryParse(json["rating"].toString()) ?? 0,
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "description": description,
-    "pictureId": pictureId,
-    "city": city,
-    "rating": 0,
-  };
+        "id": id,
+        "name": name,
+        "description": description,
+        "pictureId": pictureId,
+        "city": city,
+        "rating": 0,
+      };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -21,49 +21,29 @@ class RestaurantDetail {
     required this.menu,
   });
 
-  factory RestaurantDetail.fromRawJson(String str) => RestaurantDetail.fromJson(json.decode(str));
+  factory RestaurantDetail.fromRawJson(String str) =>
+      RestaurantDetail.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory RestaurantDetail.fromJson(Map<String, dynamic> json) => RestaurantDetail(
-      id: json["id"],
-      name: json["name"],
-      description: json["description"],
-      pictureId: json["pictureId"],
-      city: json["city"],
-      rating: double.tryParse(json["rating"].toString()) ?? 0,
-      menu: Menu.fromJson(json["menus"]),
-  );
+  factory RestaurantDetail.fromJson(Map<String, dynamic> json) =>
+      RestaurantDetail(
+        id: json["id"],
+        name: json["name"],
+        description: json["description"],
+        pictureId: json["pictureId"],
+        city: json["city"],
+        rating: double.tryParse(json["rating"].toString()) ?? 0,
+        menu: Menu.fromJson(json["menus"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "description": description,
-    "pictureId": pictureId,
-    "city": city,
-    "rating": rating,
-    "menus": menu.toJson()
-  };
+        "id": id,
+        "name": name,
+        "description": description,
+        "pictureId": pictureId,
+        "city": city,
+        "rating": rating,
+        "menus": menu.toJson()
+      };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

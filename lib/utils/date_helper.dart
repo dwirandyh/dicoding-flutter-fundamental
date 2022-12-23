@@ -6,7 +6,6 @@ class DateHelper {
     DateFormat dateFormat = DateFormat('y/M/d');
     String timeSpecific = "$hours:$seconds:00";
 
-
     final todayDate = dateFormat.format(now);
     final today = "$todayDate $timeSpecific";
     var todayDateTime = formatDateTime(today);

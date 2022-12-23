@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   TextEditingController searchTextController = TextEditingController();
 
   late HomeProvider homeProvider;
-  
+
   @override
   void initState() {
     super.initState();
@@ -29,18 +29,18 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: const Text("Daftar Restoran"),
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        title: const Text("Daftar Restoran"),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildSearchBox(context),
+            _buildRestaurantList(context),
+          ],
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildSearchBox(context),
-              _buildRestaurantList(context),
-            ],
-          ),
-        ),
+      ),
     );
   }
 
@@ -50,9 +50,7 @@ class _HomePageState extends State<HomePage> {
       child: TextField(
         controller: searchTextController,
         decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          hintText: "Cari Restoran Favoritemu"
-        ),
+            border: OutlineInputBorder(), hintText: "Cari Restoran Favoritemu"),
         onChanged: (text) {
           Provider.of<HomeProvider>(context, listen: false).findData(text);
         },
@@ -70,14 +68,16 @@ class _HomePageState extends State<HomePage> {
               itemCount: state.restaurants.length,
               itemBuilder: (context, index) {
                 return _buildRestaurantItem(context, state.restaurants[index]);
-              }
-          );
+              });
         } else if (state.state == ResultState.loading) {
           return const LoadingWidget();
         } else if (state.state == ResultState.empty) {
-          return ErrorMessageWidget(message: "Restoran tidak ditemukan, silahkan cari dengan kata kunci yang lain");
+          return ErrorMessageWidget(
+              message:
+                  "Restoran tidak ditemukan, silahkan cari dengan kata kunci yang lain");
         } else {
-          return ErrorMessageWidget(message: "Gagal menampilkan detail restoran, silahkan coba lagi");
+          return ErrorMessageWidget(
+              message: "Gagal menampilkan detail restoran, silahkan coba lagi");
         }
       },
     );
@@ -85,16 +85,15 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildRestaurantItem(BuildContext context, Restaurant restaurant) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
       leading: Image.network(
         "https://restaurant-api.dicoding.dev/images/medium/${restaurant.pictureId}",
         width: 100,
       ),
       title: Text(restaurant.name),
       subtitle: Padding(
-        padding: const EdgeInsets.only(
-          top: 8
-        ),
+        padding: const EdgeInsets.only(top: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -109,11 +108,9 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             RatingBarIndicator(
-                rating: restaurant.rating,
-                itemBuilder: (context, index) => const Icon(
-                    Icons.star,
-                    color: Colors.amber
-                ),
+              rating: restaurant.rating,
+              itemBuilder: (context, index) =>
+                  const Icon(Icons.star, color: Colors.amber),
               itemCount: 5,
               itemSize: 16,
               direction: Axis.horizontal,
@@ -128,6 +125,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void navigateToRestaurantDetail(BuildContext context, Restaurant restaurant) {
-    Navigator.pushNamed(context, RestaurantDetailPage.routeName, arguments: restaurant);
+    Navigator.pushNamed(context, RestaurantDetailPage.routeName,
+        arguments: restaurant);
   }
 }

@@ -5,15 +5,12 @@ import 'package:flutter/foundation.dart';
 enum ResultState { loading, success, empty, error }
 
 class FavoriteProvider extends ChangeNotifier {
-
   final LocalStorageService localStorageService;
 
   late ResultState state = ResultState.loading;
   late List<Restaurant> restaurants = [];
 
-  FavoriteProvider({
-    required this.localStorageService
-  }) {
+  FavoriteProvider({required this.localStorageService}) {
     loadData();
   }
 
@@ -22,14 +19,16 @@ class FavoriteProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      List<Map<String, dynamic>> dbResult = await localStorageService.find(TableSchema.favorite);
-      restaurants = List<Restaurant>.from(dbResult.map((x) => Restaurant.fromJson(x)));
+      List<Map<String, dynamic>> dbResult =
+          await localStorageService.find(TableSchema.favorite);
+      restaurants =
+          List<Restaurant>.from(dbResult.map((x) => Restaurant.fromJson(x)));
       if (restaurants.isEmpty) {
         state = ResultState.empty;
       } else {
         state = ResultState.success;
       }
-    } catch(e) {
+    } catch (e) {
       state = ResultState.error;
     } finally {
       notifyListeners();
@@ -46,14 +45,16 @@ class FavoriteProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      List<Map<String, dynamic>> dbResult = await localStorageService.findByColumn(TableSchema.favorite, "name", query);
-      restaurants = List<Restaurant>.from(dbResult.map((x) => Restaurant.fromJson(x)));
+      List<Map<String, dynamic>> dbResult = await localStorageService
+          .findByColumn(TableSchema.favorite, "name", query);
+      restaurants =
+          List<Restaurant>.from(dbResult.map((x) => Restaurant.fromJson(x)));
       if (restaurants.isEmpty) {
         state = ResultState.empty;
       } else {
         state = ResultState.success;
       }
-    } catch(e) {
+    } catch (e) {
       state = ResultState.error;
     } finally {
       notifyListeners();

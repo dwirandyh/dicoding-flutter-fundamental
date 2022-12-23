@@ -11,14 +11,12 @@ import 'package:rxdart/rxdart.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
-
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
 final selectNotificationSubject = BehaviorSubject<String?>();
 final didReceiveLocalNotificationSubject =
-BehaviorSubject<ReceivedNotification>();
-
+    BehaviorSubject<ReceivedNotification>();
 
 class NotificationService {
   static const _channelId = "01";
@@ -33,7 +31,8 @@ class NotificationService {
 
   Future<void> initNotifications(
       FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
-    var initializationSettingsAndroid = const AndroidInitializationSettings('ic_launcher');
+    var initializationSettingsAndroid =
+        const AndroidInitializationSettings('ic_launcher');
 
     var initializationSettingsIOS = DarwinInitializationSettings(
         requestAlertPermission: false,
@@ -46,47 +45,50 @@ class NotificationService {
         });
 
     var initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid,
-        iOS: initializationSettingsIOS
-    );
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse: (NotificationResponse details) async {
-          final payload = details.payload;
-          selectNotificationSubject.add(payload);
-        });
+      final payload = details.payload;
+      selectNotificationSubject.add(payload);
+    });
   }
 
-  void requestIOSPermissions(FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) {
-    flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()?.requestPermissions(alert: true, badge: true, sound: true);
+  void requestIOSPermissions(
+      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) {
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(alert: true, badge: true, sound: true);
   }
 
-  void configureDidReceiveLocalNotificationSubject(BuildContext context, String route) {
+  void configureDidReceiveLocalNotificationSubject(
+      BuildContext context, String route) {
     didReceiveLocalNotificationSubject.stream
         .listen((ReceivedNotification receivedNotification) async {
       await showDialog(
         context: context,
-        builder: (BuildContext context) =>
-            CupertinoAlertDialog(
-              title: receivedNotification.title != null
-                  ? Text(receivedNotification.title ?? "")
-                  : null,
-              content: receivedNotification.body != null
-                  ? Text(receivedNotification.body ?? "")
-                  : null,
-              actions: [
-                CupertinoDialogAction(
-                  isDefaultAction: true,
-                  child: const Text('OK'),
-                  onPressed: () async {
-                    Navigator.of(context, rootNavigator: true).pop();
-                    var restaurant = Restaurant.fromRawJson(receivedNotification.payload ?? "{}");
-                    await Navigator.pushNamed(context, route,
-                        arguments: restaurant);
-                  },
-                )
-              ],
-            ),
+        builder: (BuildContext context) => CupertinoAlertDialog(
+          title: receivedNotification.title != null
+              ? Text(receivedNotification.title ?? "")
+              : null,
+          content: receivedNotification.body != null
+              ? Text(receivedNotification.body ?? "")
+              : null,
+          actions: [
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              child: const Text('OK'),
+              onPressed: () async {
+                Navigator.of(context, rootNavigator: true).pop();
+                var restaurant = Restaurant.fromRawJson(
+                    receivedNotification.payload ?? "{}");
+                await Navigator.pushNamed(context, route,
+                    arguments: restaurant);
+              },
+            )
+          ],
+        ),
       );
     });
   }
@@ -95,13 +97,13 @@ class NotificationService {
     selectNotificationSubject.stream.listen((String? payload) async {
       if (payload != null) {
         var restaurant = Restaurant.fromRawJson(payload);
-        await Navigator.pushNamed(context, route,
-            arguments: restaurant);
+        await Navigator.pushNamed(context, route, arguments: restaurant);
       }
     });
   }
 
-  Future<void> showNotification(FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
+  Future<void> showNotification(
+      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
     final restaurantService = RestaurantService();
     final random = Random();
     final restaurants = await restaurantService.fetchAllRestaurant();
@@ -109,15 +111,15 @@ class NotificationService {
 
     var largeIconPath = await _downloadAndSaveFile(
         "https://restaurant-api.dicoding.dev/images/small/${selectedRestaurant.pictureId}",
-        "largeIcon"
-    );
+        "largeIcon");
 
     var bigPictureStyleInformation = BigPictureStyleInformation(
       FilePathAndroidBitmap(largeIconPath),
       largeIcon: FilePathAndroidBitmap(largeIconPath),
       contentTitle: 'Ada restoran baru ${selectedRestaurant.name}',
       htmlFormatContentTitle: true,
-      summaryText: 'Restoran baru dengan nama ${selectedRestaurant.name} telah di buka, segera kunjungi untuk mendapatkan diskon menarik',
+      summaryText:
+          'Restoran baru dengan nama ${selectedRestaurant.name} telah di buka, segera kunjungi untuk mendapatkan diskon menarik',
       htmlFormatSummaryText: true,
     );
 
@@ -142,8 +144,7 @@ class NotificationService {
         "Ada restoran baru nih",
         "Restoran baru dengan nama ${selectedRestaurant.name} telah di buka",
         platformChannelSpecifics,
-        payload: payload
-    );
+        payload: payload);
   }
 
   Future<String> _downloadAndSaveFile(String url, String fileName) async {
