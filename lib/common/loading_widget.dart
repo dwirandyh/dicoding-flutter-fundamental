@@ -6,15 +6,13 @@ class LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          Lottie.asset(
-            'assets/loading_indicator.json',
-          ),
-          const Text("Sedang mengambil data, silahkan tunggu")
-        ],
-      ),
+    return Column(
+      children: [
+        Lottie.asset(
+          'assets/loading_indicator.json',
+        ),
+        const Text("Sedang mengambil data, silahkan tunggu")
+      ],
     );
   }
 }

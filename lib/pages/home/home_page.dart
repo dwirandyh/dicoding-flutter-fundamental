@@ -3,6 +3,7 @@ import 'package:dicoding_flutter_fundamental/common/loading_widget.dart';
 import 'package:dicoding_flutter_fundamental/model/restaurant.dart';
 import 'package:dicoding_flutter_fundamental/pages/detail/restaurant_detail_page.dart';
 import 'package:dicoding_flutter_fundamental/pages/home/home_provider.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
@@ -28,16 +29,17 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text("Daftar Restoran"),
         ),
-        body: Column(
-          children: [
-            _buildSearchBox(context),
-            Expanded(
-                child: _buildRestaurantList(context)
-            ),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildSearchBox(context),
+              _buildRestaurantList(context),
+            ],
+          ),
         ),
     );
   }
@@ -63,6 +65,8 @@ class _HomePageState extends State<HomePage> {
       builder: (context, state, _) {
         if (state.state == ResultState.success) {
           return ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               itemCount: state.restaurants.length,
               itemBuilder: (context, index) {
                 return _buildRestaurantItem(context, state.restaurants[index]);
@@ -71,15 +75,9 @@ class _HomePageState extends State<HomePage> {
         } else if (state.state == ResultState.loading) {
           return const LoadingWidget();
         } else if (state.state == ResultState.empty) {
-          return const Padding(
-            padding: EdgeInsets.all(32.0),
-            child: ErrorMessageWidget(message: "Restoran tidak ditemukan, silahkan cari dengan kata kunci yang lain"),
-          );
+          return ErrorMessageWidget(message: "Restoran tidak ditemukan, silahkan cari dengan kata kunci yang lain");
         } else {
-          return const Padding(
-            padding: EdgeInsets.all(32.0),
-            child: ErrorMessageWidget(message: "Gagal menampilkan detail restoran, silahkan coba lagi"),
-          );
+          return ErrorMessageWidget(message: "Gagal menampilkan detail restoran, silahkan coba lagi");
         }
       },
     );
@@ -98,6 +96,7 @@ class _HomePageState extends State<HomePage> {
           top: 8
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -109,15 +108,15 @@ class _HomePageState extends State<HomePage> {
                 Text(restaurant.city)
               ],
             ),
-            Row(
-              children: [
-                const Icon(
-                  Icons.star,
-                  size: 16,
-                  color: Colors.black,
+            RatingBarIndicator(
+                rating: restaurant.rating,
+                itemBuilder: (context, index) => const Icon(
+                    Icons.star,
+                    color: Colors.amber
                 ),
-                Text(restaurant.rating.toString()),
-              ],
+              itemCount: 5,
+              itemSize: 16,
+              direction: Axis.horizontal,
             ),
           ],
         ),

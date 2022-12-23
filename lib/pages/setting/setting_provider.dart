@@ -27,6 +27,7 @@ class SettingProvider extends ChangeNotifier {
 
   void initializePreference() async {
     prefs = await SharedPreferences.getInstance();
+    getDefaultSettingValue();
   }
 
   void getDefaultSettingValue() async {

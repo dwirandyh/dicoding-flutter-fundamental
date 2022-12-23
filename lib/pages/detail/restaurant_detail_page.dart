@@ -5,6 +5,7 @@ import 'package:dicoding_flutter_fundamental/model/restaurant.dart';
 import 'package:dicoding_flutter_fundamental/model/restaurant_detail.dart';
 import 'package:dicoding_flutter_fundamental/pages/detail/restaurant_detail_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
@@ -135,14 +136,29 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
           ),
           const SizedBox(height: 8),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Icon(
-                Icons.pin_drop,
-                color: Colors.black,
-                size: 16,
+              Row(
+                children: [
+                  const Icon(
+                    Icons.pin_drop,
+                    color: Colors.black,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(restaurantDetail.city),
+                ],
               ),
-              const SizedBox(width: 8),
-              Text(restaurantDetail.city),
+              RatingBarIndicator(
+                rating: restaurantDetail.rating,
+                itemBuilder: (context, index) => const Icon(
+                    Icons.star,
+                    color: Colors.amber
+                ),
+                itemCount: 5,
+                itemSize: 16,
+                direction: Axis.horizontal,
+              ),
             ],
           ),
         ],
